@@ -26,7 +26,8 @@ class ProductController extends Controller
      public function create(Request $request)
      {
         $this->validate($request, [
-           'name' => 'required|alpha',
+           //'name' => 'required|alpha',
+           'name' => 'required|regex:/^[\pL\s\-]+$/u',
            'price' => 'required|integer',
            'description' => 'string|nullable'
         ]);
@@ -41,7 +42,7 @@ class ProductController extends Controller
 
        // 2) another way to create
        //    (make sure to set the model's "fillable" property)
-       $author = Product::create($request->all());
+       $product = Product::create($request->all());
 
        return response()->json($product, 201);
      }
@@ -55,7 +56,8 @@ class ProductController extends Controller
      public function update(Request $request, $id)
      { 
         $this->validate($request, [
-           'name' => 'required|alpha',
+           //'name' => 'required|alpha',
+           'name' => 'required|regex:/^[\pL\s\-]+$/u',
            'price' => 'required|integer',
            'description' => 'string|nullable'
         ]);

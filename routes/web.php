@@ -14,15 +14,25 @@
 */
 
 
-$router->group(['prefix'=>'api/v1'], function() use($router){
+$router->group(['prefix'=>'auth/api', 'middleware' => 'auth'], 
+                function() use($router){
+    $router->get('/items', 'ProductController@index');
+    //$router->post('/items', 'ProductController@create');
+    $router->post('items', ['middleware' => 'auth:create:products', 'uses' => 'ProductController@create']);
+    $router->get('/items/{id}', 'ProductController@show');
+    $router->put('/items/{id}', 'ProductController@update');
+    $router->delete('/items/{id}', 'ProductController@destroy');
+});
 
+
+$router->group(['prefix'=>'api'], function() use($router){
     $router->get('/items', 'ProductController@index');
     $router->post('/items', 'ProductController@create');
     $router->get('/items/{id}', 'ProductController@show');
     $router->put('/items/{id}', 'ProductController@update');
     $router->delete('/items/{id}', 'ProductController@destroy');
-
 });
+
 
 $router->get('/', function () use ($router) {
     return $router->app->version();

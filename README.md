@@ -1,5 +1,8 @@
 # Lumen PHP Framework
 
+Used this tutorial as a guide: 
+https://auth0.com/blog/developing-restful-apis-with-lumen/#Securing-the-Authors-API-with-Auth0
+
 1) To create project, run from vagrant ssh:
 composer self-update --1
 composer create-project --prefer-dist laravel/lumen phptutorial
