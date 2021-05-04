@@ -15,7 +15,9 @@ php artisan make:migration create_products_table
 php artisan migrate
 
 4) To seed database:
-php artisan make:seed (ProductsTableSeeder)
+php artisan make:seed
+or 
+php artisan db:seed --class=ProductsTableSeeder
 
 ) If you change the sites property in homestead.yaml, run
 vagrant reload --provision
