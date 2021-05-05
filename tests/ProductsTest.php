@@ -11,6 +11,7 @@ class ProductsTest extends TestCase
 
     private const PRODUCTS_ROUTE = '/api/items';
 
+
     /**
      * Create a new product via web API
      *
@@ -36,7 +37,8 @@ class ProductsTest extends TestCase
         // "created_at": "2021-05-03T21:51:39.000000Z",
         // "id": 59  
         // }
-        $this->assertEquals(201, $this->response->status());
+        $this->AssertEqualsWithError(201);
+
         $response
             ->seeJson([
                 'name' => $name,
@@ -67,8 +69,8 @@ class ProductsTest extends TestCase
         //         "The name format is invalid."
         //     ]
         // }                            
+        $this->AssertEqualsWithError(422);
 
-        $this->assertEquals(422, $this->response->status());
         $result = $response->json()['name'];
         $errorString = 'The name format is invalid.';
         $this->assertContains($errorString, $result, "Expected error string is not found.");
@@ -92,7 +94,8 @@ class ProductsTest extends TestCase
         //         "The price must be an integer."
         //     ]
         // }
-        $this->assertEquals(422, $this->response->status());
+        $this->AssertEqualsWithError(422);
+
         $result = $response->json()['price'];
         $errorString = 'The price must be an integer.';
         $this->assertContains($errorString, $result, "Expected error string is not found.");
@@ -116,11 +119,11 @@ class ProductsTest extends TestCase
         //         "The description must be a string."
         //     ]
         // }
-        $this->assertEquals(422, $this->response->status());
+        $this->AssertEqualsWithError(422);
+
         $result = $response->json()['description'];
         $errorString = 'The description must be a string.';
         $this->assertContains($errorString, $result, "Expected error string is not found.");
-
     }
 
     /**
@@ -130,7 +133,9 @@ class ProductsTest extends TestCase
      */
     public function test_UpdateProduct()
     {
-        //$name = 'ABCEDFGHIJKLMNOPQRSTUVWXYZ';
+        $this->refreshApplication();
+
+        $name = 'new test product name';
         $price = 11111;
         $description = 'test description';
 
@@ -139,26 +144,26 @@ class ProductsTest extends TestCase
         $route = self::PRODUCTS_ROUTE . "/{$product->id}";
 
         $response = $this->put($route, 
-                            ['name' => $product->name,
+                            ['name' => $name,
                              'price' => $price,
                              'description' => $description
                             ]);
 
-//echo $response;
-//dd($response);
-    // example result:
-    // {
-    // "name": "Orange",
-    // "price": 11,
-    // "description": "fresh grapes",
-    // "updated_at": "2021-05-03T21:51:39.000000Z",
-    // "created_at": "2021-05-03T21:51:39.000000Z",
-    // "id": 59  
-    // }
-        $this->assertEquals(200, $this->response->status());
+    //echo $response;
+    //dd($response);
+        // example result:
+        // {
+        // "name": "Orange",
+        // "price": 11,
+        // "description": "fresh grapes",
+        // "updated_at": "2021-05-03T21:51:39.000000Z",
+        // "created_at": "2021-05-03T21:51:39.000000Z",
+        // "id": 59  
+        // }
+        $this->AssertEqualsWithError(200);
         $response
             ->seeJson([
-                'name' => $product->name,
+                'name' => $name,
                 'price' => $price,
                 'description' => $description
             ]);        
@@ -183,8 +188,9 @@ class ProductsTest extends TestCase
         //     "name": [
         //         "The name format is invalid."
         //     ]
-        // }                            
-        $this->assertEquals(422, $this->response->status());
+        // }
+        $this->AssertEqualsWithError(422);
+
         $result = $response->json()['name'];
         $errorString = 'The name format is invalid.';
         $this->assertContains($errorString, $result, "Expected error string is not found.");
@@ -210,7 +216,8 @@ class ProductsTest extends TestCase
         //         "The price must be an integer."
         //     ]
         // }
-        $this->assertEquals(422, $this->response->status());
+        $this->AssertEqualsWithError(422);
+
         $result = $response->json()['price'];
         $errorString = 'The price must be an integer.';
         $this->assertContains($errorString, $result, "Expected error string is not found.");
@@ -236,7 +243,8 @@ class ProductsTest extends TestCase
         //         "The description must be a string."
         //     ]
         // }
-        $this->assertEquals(422, $this->response->status());
+        $this->AssertEqualsWithError(422);
+        
         $result = $response->json()['description'];
         $errorString = 'The description must be a string.';
         $this->assertContains($errorString, $result, "Expected error string is not found.");
@@ -258,7 +266,8 @@ class ProductsTest extends TestCase
         //echo $route;
 
         $this->delete($route);
-        $this->assertEquals(200, $this->response->status());
+
+        $this->AssertEqualsWithError(200);
     }    
 
     /**
@@ -274,7 +283,8 @@ class ProductsTest extends TestCase
 
         $response = $this->get($route);
 
-        $this->assertEquals(200, $this->response->status());
+        $this->AssertEqualsWithError(200);
+
         $response
             ->seeJson([
                 'name' => $product->name,
@@ -314,7 +324,7 @@ class ProductsTest extends TestCase
         // "id": 59  
         // }
 
-        $this->assertEquals(200, $this->response->status());
+        $this->AssertEqualsWithError(200);
 
         $products = $response->json();
         //dd($products);

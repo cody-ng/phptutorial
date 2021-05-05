@@ -13,4 +13,11 @@ abstract class TestCase extends BaseTestCase
     {
         return require __DIR__.'/../bootstrap/app.php';
     }
+
+    protected function AssertEqualsWithError($code)
+    {
+        $errMessage = $this->response->getContent();
+        $this->assertEquals($code, $this->response->status(), $errMessage);
+    }
+
 }

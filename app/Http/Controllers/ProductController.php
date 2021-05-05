@@ -16,8 +16,9 @@ class ProductController extends Controller
         //
     }
     
-     public function index()
+     public function index(Request $request)
      {
+        //return response($request->headers);
      
        $products = Product::all();
        return response()->json($products);
@@ -73,7 +74,6 @@ class ProductController extends Controller
         // 2) another way to update
         $product = Product::findOrFail($id);
         $product->update($request->all());
-
 
         return response()->json($product, 200);
      }
