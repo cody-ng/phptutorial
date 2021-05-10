@@ -11,11 +11,17 @@ composer self-update --rollback
 2) To create database migration table, run:
 php artisan make:migration create_products_table
 
-3) To run database migration:
+3a) To run database migration:
 php artisan migrate
 
-4) To seed database:
+3b) to rollback migration
+php artisan migrate:rollback
+
+4a) To generate a seeder:
 php artisan make:seed
+
+4b) To seed database:
+php artisan db:seed
 or 
 php artisan db:seed --class=ProductsTableSeeder
 

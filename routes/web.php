@@ -26,11 +26,20 @@ $router->group(['prefix'=>'auth/api', 'middleware' => 'auth'],
 
 
 $router->group(['prefix'=>'api'], function() use($router){
+    // products
     $router->get('/items', 'ProductController@index');
     $router->post('/items', 'ProductController@create');
     $router->get('/items/{id}', 'ProductController@show');
     $router->put('/items/{id}', 'ProductController@update');
     $router->delete('/items/{id}', 'ProductController@destroy');
+
+    // customers
+    $router->get('/customers', 'CustomerController@index');
+
+    // orders
+    $router->get('/orders', 'OrderController@index');
+    $router->post('/orders', 'OrderController@create');
+
 });
 
 
