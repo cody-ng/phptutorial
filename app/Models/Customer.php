@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Customer extends Model
 {
-    use HasFactory;
+    //use HasFactory;
 
     protected $table = 'customers';
     /**
@@ -19,8 +19,14 @@ class Customer extends Model
         'first_name', 'last_name'
     ];
 
-    public function name(){
+    public function name()
+    {
         return $this->first_name . ' ' . $this->last_name;
+    }
+
+    public function orders()
+    {
+        return $this->hasMany(Order::class);
     }
 
 }

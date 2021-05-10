@@ -44,7 +44,7 @@ class CreateCustomersAndOrdersTables extends Migration
             Schema::hasTable('products')
             ) {
 
-            Schema::create('orderDetails', function (Blueprint $table) {
+            Schema::create('orders_products', function (Blueprint $table) {
                 $table->bigIncrements('id');
 
                 $table->foreignId('order_id');
@@ -53,8 +53,8 @@ class CreateCustomersAndOrdersTables extends Migration
                         ->onUpdate('cascade')
                         ->onDelete('cascade');
 
-                $table->integer('quantity');
-                $table->integer('price');
+                $table->integer('quantity');//->default(0);
+                $table->integer('price');//->default(0);
                 
                 $table->foreignId('product_id');
                 $table->foreign('product_id')
@@ -80,7 +80,7 @@ class CreateCustomersAndOrdersTables extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('orderDetails');
+        Schema::dropIfExists('orders_products');
         Schema::dropIfExists('orders');
         Schema::dropIfExists('customers');
     }

@@ -7,7 +7,6 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Order extends Model
 {
-    use HasFactory;
 
     protected $table = 'orders';
     /**
@@ -18,6 +17,31 @@ class Order extends Model
     protected $fillable = [
         'total', 'customer_id'
     ];
+
+    public function customer()
+    {
+        return $this->belongsTo(Customer::class);
+    }
+
+    // public function orderDetails()
+    // {
+    //     return $this->hasMany(OrderProduct::class);
+    // }
+
+    public function products()
+    {
+        //return $this->belongsToMany(Product::class);
+        return $this->belongsToMany(Product::class, 
+                                    'orders_products',
+                                    'order_id', // this table's FK in relationship table
+                                    'product_id' 
+                                )
+                    ->withPivot('quantity', 'price')
+                    ->as('orderDetails')                    
+                    ->withTimestamps()
+                    ;
+
+    }
 
 
 }

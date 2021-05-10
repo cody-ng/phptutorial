@@ -50,6 +50,7 @@ class OrderController extends Controller
         // 1b) validate the customer IDs are valid
         $inputCustomerId = $request['customer_id'];
         $inputProducts = $request['products'];
+        //dd($request);
 
         $rawResult = DB::table('customers')
                           ->where('id', '=', $inputCustomerId)
@@ -70,10 +71,10 @@ class OrderController extends Controller
       // 1c) validate the product IDs are valid
       $inputProductIds = collect(array_column($inputProducts, 'product_id'));
 
-      $rawProductIds = DB::table('products')
+      $rawProducts = DB::table('products')
                         ->whereIn('id', $inputProductIds)
-                        ->get(['id']);
-      $dbProductIds = $rawProductIds->map(function($item, $key){
+                        ->get(['id', 'price']);
+      $dbProductIds = $rawProducts->map(function($item, $key){
         return $item->id;
       });
 
@@ -87,29 +88,37 @@ class OrderController extends Controller
 
       // 2) input validated at this point.  Save order to database
 
+      // 2a) calculate order total
+      $total = 0;
 
-      return response('success');
-      //return response($dbProductIds);
-      // return response()->json([
-      //   'inputProductCount' => $inputProductCount,
-      //   'dbProductCount' => $dbProductCount,
-      // ]);
+      // one way to loop thru array
+      foreach ($inputProducts as $key => $p) {
+        $temp = $rawProducts->firstWhere('id', '=', $p['product_id']);
+        $p['price'] = $temp->price; // add price field to the array sync()
+        $inputProducts[$key] = $p;
+        $total += $p['price'] * $p['quantity'];
+      } 
+      unset($p); // good practice to delete the loop variable
+      unset($temp); // need this?
 
+      // second way requires a collection to use map()
+      // $inputProducts = $inputProducts->map(function($p) { 
+      //   $temp = $rawProducts->firstWhere('id', '=', $p['product_id']);
+      //   $p['price'] = $temp->price;
+      //   return $p; 
+      // });      
 
+      // 2b) create order
+      $order = Order::create([
+        'customer_id' => $inputCustomerId,
+        'total' => $total,
+      ]);
 
-        /* 1) one way to create
-       $product = new Product;
-       $product->name= $request->name;
-       $product->price = $request->price;
-       $product->description= $request->description;
-       
-       $product->save();*/
+      // 2c) create the list of products using relationship
+      $order->products()->sync($inputProducts);
 
-       // 2) another way to create
-       //    (make sure to set the model's "fillable" property)
-       //$product = Product::create($request->all());
-
-       //return response()->json($product, 201);
+      // 3) return the new order info
+      return response($order, 201);
      }
 
 
