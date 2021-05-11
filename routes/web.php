@@ -39,6 +39,7 @@ $router->group(['prefix'=>'api'], function() use($router){
     // orders
     $router->get('/orders', 'OrderController@index');
     $router->post('/orders', 'OrderController@create');
+    $router->get('/orders/{id}', 'OrderController@getOrderDetails');
 
 });
 

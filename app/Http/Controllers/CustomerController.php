@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 
 class CustomerController extends Controller
 {
+
     /**
      * Create a new controller instance.
      *
@@ -20,16 +21,19 @@ class CustomerController extends Controller
      {
        $customers = Customer::all();
 
+       return response()->json($customers);
+
+
        //$filtered = $customers->only(['id', 'name']);       
-       $filtered = $customers->map(function ($item, $key) {
-         return [
-            'id' => $item->id,
-            'name' => $item->name()
-            //'creation_date' => $item->created_at->format('m/d/Y')
-        ];
+      //  $filtered = $customers->map(function ($item, $key) {
+      //    return [
+      //       'id' => $item->id,
+      //       'name' => $item->name()
+      //       //'creation_date' => $item->created_at->format('m/d/Y')
+      //   ];
      
-       });
-       return response()->json($filtered);
+      //  });
+      //  return response()->json($filtered);
      }
 
 

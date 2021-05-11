@@ -2,6 +2,8 @@
 
 namespace App\Models;
 
+use DateTimeInterface;
+
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
@@ -18,15 +20,37 @@ class Order extends Model
         'total', 'customer_id'
     ];
 
-    public function customer()
+    protected $hidden = [
+        'created_at'
+        ,'customerObj'
+    ];
+
+    // shows up in json serialization
+    protected $appends = [
+        'customer_name'
+    ];
+
+    protected function serializeDate(DateTimeInterface $date)
     {
-        return $this->belongsTo(Customer::class);
+        // https://www.php.net/manual/en/class.datetimeinterface.php
+        return $date->format('m-d-Y H:i:s');
     }
 
-    // public function orderDetails()
-    // {
-    //     return $this->hasMany(OrderProduct::class);
-    // }
+    public function getCustomerNameAttribute()
+    {
+        // https://echebaby.com/blog/2021-01-05-laravel-check-if-a-relation-is-loaded-on-Eloquent-model/
+        if( $this->relationLoaded('customerObj') )
+        {
+            return $this->customerObj->full_name;
+        }
+
+        return 'n/a';
+    }
+
+    public function customerObj()
+    {
+        return $this->belongsTo(Customer::class, 'customer_id');
+    }
 
     public function products()
     {

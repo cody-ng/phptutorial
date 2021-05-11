@@ -2,6 +2,8 @@
 
 namespace App\Models;
 
+use DateTimeInterface;
+
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
@@ -19,9 +21,22 @@ class Customer extends Model
         'first_name', 'last_name'
     ];
 
-    public function name()
+    protected $hidden = [
+        'first_name', 'last_name', 'updated_at'
+    ];
+
+    protected $appends = ['full_name'];
+
+    protected function serializeDate(DateTimeInterface $date)
     {
-        return $this->first_name . ' ' . $this->last_name;
+        // https://www.php.net/manual/en/class.datetimeinterface.php
+        return $date->format('m-d-Y H:i:s');
+    }
+
+    public function getFullNameAttribute()
+    {
+        //return $this->first_name . ' ' . $this->last_name;
+        return "{$this->first_name} {$this->last_name}";
     }
 
     public function orders()
