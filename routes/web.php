@@ -17,29 +17,38 @@
 $router->group(['prefix'=>'auth/api', 'middleware' => 'auth'], 
                 function() use($router){
     $router->get('/items', 'ProductController@index');
-    //$router->post('/items', 'ProductController@create');
     $router->post('items', ['middleware' => 'auth:create:products', 'uses' => 'ProductController@create']);
-    $router->get('/items/{id}', 'ProductController@show');
-    $router->put('/items/{id}', 'ProductController@update');
-    $router->delete('/items/{id}', 'ProductController@destroy');
+    $router->get('/items/{id:[0-9]+}', 'ProductController@show');
+    $router->put('/items/{id:[0-9]+}', 'ProductController@update');
+    $router->delete('/items/{id:[0-9]+}', 'ProductController@destroy');
 });
 
 
 $router->group(['prefix'=>'api'], function() use($router){
+    
     // products
-    $router->get('/items', 'ProductController@index');
-    $router->post('/items', 'ProductController@create');
-    $router->get('/items/{id}', 'ProductController@show');
-    $router->put('/items/{id}', 'ProductController@update');
-    $router->delete('/items/{id}', 'ProductController@destroy');
+    $router->get('/products', [
+        'as' => 'getProducts', 'uses' => 'ProductController@index']);
+    $router->post('/products', [
+        'as' => 'createProduct', 'uses' => 'ProductController@create']);
+    $router->get('/products/{id:[0-9]+}', [
+        'as' => 'getOneProduct', 'uses' => 'ProductController@show']);
+    $router->put('/products/{id:[0-9]+}', [
+        'as' => 'updateProducts', 'uses' => 'ProductController@update']);
+    $router->delete('/products/{id:[0-9]+}', [
+        'as' => 'deleteProducts', 'uses' => 'ProductController@destroy']);
 
     // customers
-    $router->get('/customers', 'CustomerController@index');
+    $router->get('/customers', [
+        'as' => 'customers', 'uses' => 'CustomerController@index']);
 
     // orders
-    $router->get('/orders', 'OrderController@index');
-    $router->post('/orders', 'OrderController@create');
-    $router->get('/orders/{id}', 'OrderController@getOrderDetails');
+    $router->get('/orders', [
+        'as' => 'orders', 'uses' => 'OrderController@index']);
+    $router->post('/orders', [
+        'as' => 'createOrders', 'uses' => 'OrderController@create']);
+    $router->get('/orders/{id:[0-9]+}', [
+        'as' => 'orderDetails', 'uses' => 'OrderController@orderDetails']);
 
 });
 

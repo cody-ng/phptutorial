@@ -1,10 +1,14 @@
 <?php
 
 namespace App\Http\Controllers;
+
 use App\Models\Order;
-use Illuminate\Http\Request;
+use App\Models\Customer;
 
 use DB;
+
+use Illuminate\Http\Request;
+
 
 class OrderController extends Controller
 {
@@ -22,6 +26,7 @@ class OrderController extends Controller
     {
       //$orders = Order::all();
       $orders = Order::with('customerObj')->get();
+      //dd($orders[0]->customerObj->full_name);
     
       return response()->json($orders);
     }
@@ -44,13 +49,14 @@ class OrderController extends Controller
       $inputProducts = $request['products'];
       //dd($request);
 
-      $rawResult = DB::table('customers')
-                        ->where('id', '=', $inputCustomerId)
-                        ->first(['id']);
+      // $rawCustomer = DB::table('customers') // returns json, but not the model class
+      $rawCustomer = Customer::
+                        where('id', '=', $inputCustomerId)
+                        ->first();
       $isFound = false;
 
-      if( $rawResult !== null ){
-        $dbCustomerId = $rawResult->id;
+      if( $rawCustomer !== null ){
+        $dbCustomerId = $rawCustomer->id;
         $isFound = ($inputCustomerId === $dbCustomerId);
       }
 
@@ -79,7 +85,6 @@ class OrderController extends Controller
     }
 
     // 2) input validated at this point.  Save order to database
-
     // 2a) calculate order total
     $total = 0;
 
@@ -109,13 +114,28 @@ class OrderController extends Controller
     // 2c) create the list of products using relationship
     $order->products()->sync($inputProducts);
 
+    // 2d) load the customer name for this order
+    //$order->load('customerObj'); // load from db, or
+    $order->customer_name = $rawCustomer->full_name;
+
     // 3) return the new order info
     return response($order, 201);
     }
 
-    public function getOrderDetails($id, Request $request)
+    public function orderDetails($id)
     {
-      return response("tbd", 200);
+      $order = Order::with(['customerObj', 'products'])
+                      ->where('id', '=', $id)
+                      ->first();
+      if( is_null($order) )
+      {
+        return response()->json([
+          'Message' => "The product ID is not found: {$id}"
+        ], 400);
+      }
+
+      
+      return response($order, 200);
     }
 
 

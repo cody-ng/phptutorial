@@ -2,6 +2,8 @@
 
 namespace App\Models;
 
+use DateTimeInterface;
+
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
@@ -18,10 +20,17 @@ class Product extends Model
         'name', 'price','description'
     ];
 
-    // public function orderDetails()
-    // {
-    //     return $this->hasMany(OrderProduct::class);
-    // }
+    protected $hidden = [
+        'created_at'
+        ,'updated_at'
+    ];
+
+    protected function serializeDate(DateTimeInterface $date)
+    {
+        // https://www.php.net/manual/en/class.datetimeinterface.php
+        return $date->format('m-d-Y H:i:s');
+    }
+
 
     public function orders()
     {

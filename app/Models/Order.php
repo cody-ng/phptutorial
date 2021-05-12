@@ -36,16 +36,29 @@ class Order extends Model
         return $date->format('m-d-Y H:i:s');
     }
 
+    // add a new custom field to the model
     public function getCustomerNameAttribute()
     {
+        // if relationship object is loaded, return from there
         // https://echebaby.com/blog/2021-01-05-laravel-check-if-a-relation-is-loaded-on-Eloquent-model/
         if( $this->relationLoaded('customerObj') )
         {
             return $this->customerObj->full_name;
         }
+        // otherwise, if manually set, return it
+        else if (isset($this->attributes['customer_name'] ))
+        {
+            return $this->attributes['customer_name'];
+        }
 
+        // never been set
         return 'n/a';
     }
+
+    public function setCustomerNameAttribute($value)
+    {
+        $this->attributes['customer_name'] = $value;
+    }    
 
     public function customerObj()
     {
@@ -61,6 +74,7 @@ class Order extends Model
                                     'product_id' 
                                 )
                     ->withPivot('quantity', 'price')
+                    ->using(OrdersProductsPivot::class) // custom pivot class
                     ->as('orderDetails')                    
                     ->withTimestamps()
                     ;
