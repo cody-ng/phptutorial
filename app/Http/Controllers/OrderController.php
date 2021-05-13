@@ -25,8 +25,29 @@ class OrderController extends Controller
     public function index(Request $request)
     {
       //$orders = Order::all();
-      $orders = Order::with('customerObj')->get();
-      //dd($orders[0]->customerObj->full_name);
+
+      $page = $request['page'];
+      $per_page = $request['per_page'];
+      //dd($page);
+
+      if( !isset($page))
+      {
+        // if 'page' url parameter is missing, then return all items
+        $orders = Order::with('customerObj')->get();
+        //dd($orders[0]->customerObj->full_name);
+      }
+      else
+      {
+        if( !isset($page))
+        {
+          $per_page = 10; // defaults to 10 items per page
+        }
+
+        // https://stackoverflow.com/questions/56583797/add-parameters-to-pagination
+
+        //$orders = Order::with('customerObj')->paginate($per_page);
+        $orders = Order::with('customerObj')->paginate($per_page, ['*'], 'page', $page);
+      }
     
       return response()->json($orders);
     }
