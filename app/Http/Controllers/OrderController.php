@@ -6,6 +6,7 @@ use App\Models\Order;
 use App\Models\Customer;
 
 use DB;
+use Carbon\Carbon;
 
 use Illuminate\Http\Request;
 
@@ -155,8 +156,43 @@ class OrderController extends Controller
         ], 400);
       }
 
-      
-      return response($order, 200);
+      // "id": 1,
+      // "name": "Apple",
+      // "price": 3,
+      // "description": "one pound of apple",
+      // "order_details": {
+      //     "quantity": 2,
+      //     "price": 3
+      // }
+      $products = $order->products->map(function($item, $key){
+        return [
+          'id' => $item->id,
+          'name' => $item->name,
+          'price' => $item->orderDetails->price,
+          'quantity' => $item->orderDetails->quantity,
+          'description' => $item->description,
+          'updated_at' => $this->formatDateTime($item->updated_at)
+        ];
+      });
+
+      //return response($order, 200);
+
+      return response()->json([
+        'id' => $order->id,
+        'total' => $order->total,
+        'customer_id' => $order->customer_id,
+        'updated_at' => $this->formatDateTime($order->updated_at),
+        'customer_name' => $order->customer_name,
+
+        'products' => $products
+      ], 200);
+
+
+    }
+
+    protected function formatDateTime($dt)
+    {
+      return Carbon::parse($dt, 'UTC')->format('m-d-Y h:i:s a');
     }
 
 

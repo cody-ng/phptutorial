@@ -30,7 +30,7 @@ class Customer extends Model
     protected function serializeDate(DateTimeInterface $date)
     {
         // https://www.php.net/manual/en/class.datetimeinterface.php
-        return $date->format('m-d-Y H:i:s');
+        return $date->format('m-d-Y h:i:s a');
     }
 
     public function getFullNameAttribute()
